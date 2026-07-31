@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Paper | Machine Learning Discoverability Auditing</title>
+    <style>
+        body { font-family: 'Fira Code', Georgia, sans-serif; background: #F7FAFC; color: #1A202C; max-width: 900px; margin: 0 auto; padding: 40px 20px; line-height: 1.6; }
+        header { border-bottom: 2px solid #008080; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { color: #008080; font-size: 2em; }
+        h2 { color: #008080; border-bottom: 1px solid #CBD5E0; padding-bottom: 5px; margin-top: 30px; }
+        .abstract { background: #EDF2F7; border-left: 4px solid #008080; padding: 15px 20px; margin-bottom: 30px; font-style: italic; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #CBD5E0; padding: 10px; text-align: left; }
+        th { background: #008080; color: white; }
+        footer { margin-top: 50px; font-size: 0.9em; color: #718096; border-top: 1px solid #CBD5E0; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Evaluating Random Forest Anomaly Classifiers Against Rule-Based Baselines for Organic Search Telemetry</h1>
+        <p><strong>Author:</strong> Rashid Aziz | Machine Learning Track</p>
+    </header>
+
+    <div class="abstract">
+        <strong>Abstract:</strong> This research evaluates machine learning approaches for detecting organic search discoverability anomalies using telemetry datasets. We define a baseline heuristic rule based on positional drops and impression variance, compare it against a trained Random Forest classifier, and perform temporal out-of-time validation. Our findings indicate that non-linear ML models reduce false-positive audit alerts on newly indexed pages compared to static baseline rules. Finally, we convert model outputs into a human-in-the-loop content action playbook.
+    </div>
+
+    <section>
+        <h2>1. Introduction / Problem Statement</h2>
+        <p>High-velocity web search infrastructure requires early identification of discoverability drops. Traditional rigid baseline rules often generate false positives due to site migrations or natural rank bouncing. This paper addresses whether a machine learning model evaluated under strict temporal validation can reliably directionalize content audit resources.</p>
+    </section>
+
+    <section>
+        <h2>2. Data & Feature Contracts</h2>
+        <p>Evaluation was conducted on standard anonymized search telemetry splits (<code>month=2026-03</code>). Public-safe features include trailing 7-day impression variance (<code>impression_std_7d</code>), 30-day position averages, and position momentum ratios. All private domain identities and sensitive tokens were excluded.</p>
+    </section>
+
+    <section>
+        <h2>3. Methodology & Validation Design</h2>
+        <p>We implemented a Random Forest classifier ($n=100, \text{max\_depth}=5$). To prevent data leakage common in standard K-Fold splitting, evaluation was strictly performed using <code>TimeSeriesSplit</code> out-of-time folds.</p>
+    </section>
+
+    <section>
+        <h2>4. Results (Model vs Baseline)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Evaluation Metric</th>
+                    <th>Week-4 Rule Baseline</th>
+                    <th>Week-5 Random Forest (Leaky)</th>
+                    <th>Week-6 TimeSeriesSplit (Honest)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Precision</td>
+                    <td>0.62</td>
+                    <td>0.89</td>
+                    <td>0.81</td>
+                </tr>
+                <tr>
+                    <td>Recall</td>
+                    <td>0.74</td>
+                    <td>0.85</td>
+                    <td>0.78</td>
+                </tr>
+                <tr>
+                    <td>F1-Score</td>
+                    <td>0.67</td>
+                    <td>0.87</td>
+                    <td>0.79</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>5. Limitations & Honest Framing</h2>
+        <p>The model is intended strictly for directional decision-support. Performance degradation was observed on brand-new pages (age &lt; 30 days), requiring explicit human review rules.</p>
+    </section>
+
+    <section>
+        <h2>6. Ranked Content Action Playbook</h2>
+        <p>Model scores map directly to operational actions: <code>REFRESH_CONTENT</code> (Score &ge; 80), <code>TECHNICAL_AUDIT</code> (Score 50–79), and <code>NO_ACTION</code> (Score &lt; 50), with mandatory human overrides for new pages.</p>
+    </section>
+
+    <footer>
+        <p><strong>Reproducibility:</strong> Executable Jupyter notebooks (<code>w04_baseline_score.ipynb</code> through <code>w07_action_playbook.ipynb</code>) are available in the repository root under <code>work/notebooks/</code>.</p>
+        <p><strong>Acknowledgments & Data Credit:</strong> Built on the FlyRank ML Internship dataset. Data source provided by <a href="https://flyrank.ai" target="_blank">FlyRank.ai</a>.</p>
+    </footer>
+</body>
+</html>
